@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Pendências</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-r from-blue-700 to-blue-900 flex flex-col items-center justify-center min-h-screen p-4">
+    <h2 class="text-white text-2xl font-bold mb-6">Dashboard de Pendências</h2>
+    <div class="bg-white p-6 rounded-2xl shadow-xl w-full max-w-4xl">
+        <div id="dashboardContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        </div>
+        <div class="flex gap-4 mt-4">
+            <button onclick="limparRegistros()" class="w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 transition">
+                Limpar Registros
+            </button>
+            <button onclick="window.location.href='index.html'" class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition">
+                Voltar
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function carregarPendencias() {
+            let registros = JSON.parse(localStorage.getItem('pendencias')) || [];
+            let container = document.getElementById('dashboardContainer');
+            container.innerHTML = "";
+            
+            registros.forEach(registro => {
+                let card = `<div class='bg-gray-100 p-4 rounded-lg shadow-md border border-gray-300'>
+                    <p class="font-semibold">Técnico: <span class="text-blue-600">${registro.tecnico}</span></p>
+                    <p>Data: ${registro.data}</p>
+                    <p>Tipo: ${registro.tipo}</p>
+                    <p>Procedimento: ${registro.procedimento}</p>
+                    <p>Observações: ${registro.observacao}</p>
+                    <button><img src="" alt="whatsapp"></button>
+                </div>`;
+                container.innerHTML += card;
+            });
+        }
+
+        function limparRegistros() {
+            localStorage.removeItem('pendencias');
+            carregarPendencias();
+        }
+
+        carregarPendencias();
+    </script>
+</body>
+</html>
