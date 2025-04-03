@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disparador de WhatsApp</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-r from-blue-700 to-blue-900 flex flex-col items-center justify-center min-h-screen p-4">
+    <h2 class="text-white text-2xl font-bold mb-6">Disparador de WhatsApp</h2>
+    <form id="whatsappForm" class="bg-white p-6 rounded-2xl shadow-xl w-full max-w-md">
+        <div class="space-y-4">
+            <div>
+                <label class="block text-gray-700 font-semibold">Técnico:</label>
+                <input type="text" id="tecnico" required class="w-full p-2 border rounded-lg">
+            </div>
+            <div>
+                <label class="block text-gray-700 font-semibold">Data:</label>
+                <input type="text" id="data" required class="w-full p-2 border rounded-lg" placeholder="DD/MM/YYYY" oninput="formatarData(this)">
+            </div>
+            <div>
+                <label class="block text-gray-700 font-semibold">Procedimento:</label>
+                <select id="procedimento" required class="w-full p-2 border rounded-lg">
+                    <option value="PROCEDIMENTO TÉCNICO">PROCEDIMENTO TÉCNICO</option>
+                    <option value="PROCEDIMENTO FÍSICO">PROCEDIMENTO FÍSICO</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-gray-700 font-semibold">Tipo:</label>
+                <select id="tipo" required class="w-full p-2 border rounded-lg">
+                    <option value="MAPEAMENTO INCORRETO">MAPEAMENTO INCORRETO</option>
+                    <option value="SINAL DIVERGENTE">SINAL DIVERGENTE</option>
+                    <option value="CTO DESORGANIZADA">CTO DESORGANIZADA</option>
+                    <option value="FALTA DE LACRE">FALTA DE LACRE</option>
+                    <option value="FOTOS NÃO ENVIADAS">FOTOS NÃO ENVIADAS</option>
+                    <option value="FORA DO PADRÃO">FORA DO PADRÃO</option>
+                    <option value="BAIXA DE ESTOQUE">BAIXA DE ESTOQUE</option>
+                    <option value="FINALIZAÇÃO INCORRETA">FINALIZAÇÃO INCORRETA</option>
+                    <option value="PRIORIDADE DE SERVIÇO">PRIORIDADE DE SERVIÇO</option>
+                    <option value="ACESSO REMOTO DESLIGADO">ACESSO REMOTO DESLIGADO</option>
+                    <option value="FREQUÊNCIA ERRADA">FREQUÊNCIA ERRADA</option>
+                    <option value="NÃO INICIOU O.S">NÃO INICIOU O.S</option>
+                    <option value="IPV6 COM ERRO">IPV6 COM ERRO</option>
+                    <option value="O.S SEM MOVIMENTAÇÃO">O.S SEM MOVIMENTAÇÃO</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-gray-700 font-semibold">Código do Cliente:</label>
+                <input type="text" id="codCliente" required class="w-full p-2 border rounded-lg">
+            </div>
+            <div>
+                <label class="block text-gray-700 font-semibold">Observação:</label>
+                <textarea id="observacao" class="w-full p-2 border rounded-lg"></textarea>
+            </div>
+            <div>
+                <label class="block text-gray-700 font-semibold">Telefone:</label>
+                <input type="tel" id="telefone" placeholder="5511999999999" required class="w-full p-2 border rounded-lg">
+            </div>
+        </div>
+        <button type="button" onclick="enviarWhatsApp()" class="w-full bg-blue-600 text-white py-2 rounded-lg mt-4 hover:bg-blue-700 transition">Enviar WhatsApp</button>
+    </form>
+
+    <script>
+        function formatarData(input) {
+            let value = input.value.replace(/\D/g, "");
+            if (value.length > 2) value = value.replace(/(\d{2})(\d)/, "$1/$2");
+            if (value.length > 5) value = value.replace(/(\d{2}\/\d{2})(\d)/, "$1/$2");
+            input.value = value;
+        }
+
+        function enviarWhatsApp() {
+            let tecnico = document.getElementById('tecnico').value;
+            let data = document.getElementById('data').value;
+            let procedimento = document.getElementById('procedimento').value;
+            let tipo = document.getElementById('tipo').value;
+            let codCliente = document.getElementById('codCliente').value;
+            let observacao = document.getElementById('observacao').value;
+            let telefone = document.getElementById('telefone').value;
+            
+            let mensagem = `================================%0A` +
+                           `Técnico: ${tecnico}%0A` +
+                           `Data: ${data}%0A` +
+                           `Procedimento: ${procedimento}%0A` +
+                           `Tipo: ${tipo}%0A` +
+                           `Cod Cliente: ${codCliente}%0A` +
+                           `Observação: ${observacao}%0A` +
+                           `================================`;
+            
+            let url = `https://api.whatsapp.com/send?phone=${telefone}&text=${mensagem}`;
+            
+            let newWindow = window.open(url, '_blank');
+            if (newWindow) {
+                newWindow.opener = null;
+            }
+        }
+    </script>
+</body>
+</html>
