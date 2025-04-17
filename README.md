@@ -19,3 +19,5 @@ A solução tem como forma o armazenamento local para registros futuros em plani
 - Tailwind (estilização)
 - Javascript (Gambiarras detectáveis) 
 
+## Link para utilização
+- [@Use sem moderação](https://thiaaagao.github.io/disparador/index.html)
