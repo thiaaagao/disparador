@@ -76,12 +76,12 @@
         }
 
         function enviarWhatsApp() {
-            let tecnico = document.getElementById('tecnico').value;
+            let tecnico = document.getElementById('tecnico').value.toUpperCase();
             let data = document.getElementById('data').value;
             let procedimento = document.getElementById('procedimento').value;
             let tipo = document.getElementById('tipo').value;
             let codCliente = document.getElementById('codCliente').value;
-            let observacao = document.getElementById('observacao').value;
+            let observacao = document.getElementById('observacao').value.toUpperCase();
             let telefone = document.getElementById('telefone').value;
             
             let registro = { tecnico, data, procedimento, tipo, codCliente, observacao }
