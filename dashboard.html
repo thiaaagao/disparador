@@ -8,7 +8,9 @@
     />
     <title>Dashboard de Pendências</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
   </head>
+
   <body
     class="bg-gradient-to-r from-blue-700 to-blue-900 flex flex-col items-center justify-center min-h-screen p-4"
   >
@@ -35,16 +37,33 @@
         >
           Voltar
         </button>
-        <button type="button" id="autorefresh" onclick="reloadPage()" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">Atualizar</button>
+        <button
+          onclick="exportarParaExcel()"
+          class="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition"
+        >
+          Exportar para Excel
+        </button>
+        <button
+          type="button"
+          id="autorefresh"
+          onclick="reloadPage()"
+          class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+        >
+          Atualizar
+        </button>
       </div>
     </div>
 
     <script>
       function carregarPendencias() {
-        let registros = JSON.parse(localStorage.getItem("pendencias")) || [];
-        let container = document.getElementById("dashboardContainer");
+        let registros =
+          JSON.parse(localStorage.getItem("pendencias")) ||
+          [];
+        let container = document.getElementById(
+          "dashboardContainer"
+        );
         container.innerHTML = "";
-    
+
         registros.forEach((registro) => {
           let card = `<div class='bg-gray-100 p-4 rounded-lg shadow-md border border-gray-300'>
             <p class="font-semibold">Técnico: <span class="text-blue-600">${registro.tecnico}</span></p>
@@ -57,37 +76,113 @@
           container.innerHTML += card;
         });
       }
-    
+
       function limparRegistros() {
         localStorage.removeItem("pendencias");
         carregarPendencias();
       }
-    
+
       function reloadPage() {
         carregarPendencias();
         mostrarToast(); // Mostra toast ao clicar no botão também
       }
-    
+
       function mostrarToast() {
         const toast = document.getElementById("toast");
         toast.classList.remove("opacity-0");
         toast.classList.add("opacity-100");
-    
+
         setTimeout(() => {
           toast.classList.remove("opacity-100");
           toast.classList.add("opacity-0");
         }, 3000);
       }
-    
+
+      function exportarParaExcel() {
+        let registros =
+          JSON.parse(localStorage.getItem("pendencias")) ||
+          [];
+
+        if (registros.length === 0) {
+          alert("Sem registros para exportar.");
+          return;
+        }
+
+        const cabecalho = [
+          "Técnico",
+          "Data",
+          "Procedimento",
+          "Tipo",
+          "Cod Cliente",
+          "Observação"
+        ];
+
+        const dadosPlanilha = registros.map((registro) => [
+          registro.tecnico,
+          registro.data,
+          registro.procedimento,
+          registro.tipo,
+          registro.codCliente,
+          registro.observacao
+        ]);
+
+        const dadosComCabecalho = [
+          cabecalho,
+          ...dadosPlanilha
+        ];
+
+        const ws = XLSX.utils.aoa_to_sheet(
+          dadosComCabecalho
+        );
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Pendências");
+        XLSX.writeFile(wb, "pendencias.xlsx");
+
+        const agora = new Date();
+        const dia = String(agora.getDate()).padStart(
+          2,
+          "0"
+        );
+        const mes = String(agora.getMonth() + 1).padStart(
+          2,
+          "0"
+        );
+        const ano = agora.getFullYear();
+
+        const nomeArquivo = `Relatorio_pendencias_${ano}-${mes}-${dia}.xlsx`;
+
+        XLSX.writeFile(wb, nomeArquivo);
+      }
+      function mostrarToast(
+        message = "Dados atualizados!"
+      ) {
+        // Adicione 'message' com valor padrão
+        const toast = document.getElementById("toast");
+        if (!toast) {
+          // Adicione esta verificação para evitar erros se o toast não existir
+          console.error(
+            "Elemento 'toast' não encontrado no HTML."
+          );
+          return;
+        }
+        toast.textContent = message; // Define o texto do toast
+        toast.classList.remove("opacity-0");
+        toast.classList.add("opacity-100");
+
+        setTimeout(() => {
+          toast.classList.remove("opacity-100");
+          toast.classList.add("opacity-0");
+        }, 3000);
+      }
+
       // Inicial
       carregarPendencias();
-    
+
       // Atualização automática com toast
       setInterval(() => {
         carregarPendencias();
         mostrarToast();
       }, 10000);
     </script>
-    
   </body>
 </html>
